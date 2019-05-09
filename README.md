@@ -3,12 +3,12 @@
 </h1>
 
 <h4 align='center'>
-    Sometimes I just need to hit something.
+    Multi-port listener
 </h4>
 
 ## Usage
 
-Have noiibat listen on four ports.
+Have [noiibat](https://bulbapedia.bulbagarden.net/wiki/Noibat_(Pok%C3%A9mon)) listen on `4` ports.
 
 ```bash
 noiibat --listeners 4
