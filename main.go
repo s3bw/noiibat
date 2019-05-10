@@ -9,14 +9,13 @@ import (
 )
 
 func main() {
-	// cmd.Execute()
 	cfg := config.New()
 	ctx := context.Background()
 
-	bat, err := noiibat.Spawn(ctx, cfg)
+	app, err := noiibat.NewApp(ctx, cfg)
 	if err != nil {
 		log.Fatalf("error: %v", err)
 	}
 
-	bat.ListenAndServe()
+	app.Start()
 }
