@@ -1,8 +1,10 @@
 package noiibat
 
 import (
+	"context"
 	"fmt"
 	"net/http"
+	"time"
 
 	animalhash "github.com/foxyblue/animal-hash/animal-hash"
 	"github.com/foxyblue/noiibat/config"
@@ -12,12 +14,14 @@ import (
 
 // Noiibat is a listener on a single port
 type Noiibat struct {
-	Name   string
-	Port   int
-	Host   string
-	router http.Handler
-	config *config.Listener
-	app    *config.Config
+	Name           string
+	Port           int
+	Host           string
+	Context        *context.Context
+	ContextTimeOut time.Duration
+	router         http.Handler
+	config         *config.Listener
+	app            *config.Config
 }
 
 // ListenAndServe a single bat
@@ -36,24 +40,24 @@ func (s *Noiibat) ListenAndServe() {
 	}(server)
 }
 
+// RegisterHandlers adds middleware as defined in config
 func (s *Noiibat) RegisterHandlers() {
-	router := s.router
+	router := mux.NewRouter()
+	router.Handle("/target", http.HandlerFunc(s.FinalHandler))
+
 	for _, name := range s.config.Handlers {
-		router = s.ApplyHandler(name, router)
+		middleware := s.ApplyHandler(name)
+		router.Use(middleware)
 	}
 	s.router = router
 }
 
 func NewNoiibat(n string, config *config.Listener, app *config.Config) *Noiibat {
-	router := mux.NewRouter()
-	router.Handle("/target", http.HandlerFunc(FinalHandler))
-
 	name := animalhash.Hash(n, app.HashSeed)
 	return &Noiibat{
 		Name:   name,
 		Port:   config.Port,
 		Host:   app.Address,
 		config: config,
-		router: router,
 	}
 }
