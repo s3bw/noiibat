@@ -15,10 +15,10 @@ var yamlExample = []byte(`
 listeners:
 - port: 8990
   handlers: ['respond']
-  context_time_out: 3
+  # context_time_out: 3
   delay: 6
 - port: 8991
-# - port: 8992
+- port: 8992
 #   delay: 30
 address: localhost
 hash_seed: 17

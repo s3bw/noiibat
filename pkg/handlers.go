@@ -16,6 +16,9 @@ type UUID string
 // UUIDKey refers to the key to use to store trace ID in context
 const UUIDKey UUID = "user"
 
+// ResponsePayload
+const ResponsePayload string = "{\"actions\":{\"decline_transaction\":1},\"details\":{\"name\":\"model-kassandra\",\"version\":\"v14\",\"score\":0.78,\"features\":{\"x\":1,\"y\":0},\"threshold\":0.8}, \"lock_user\": 1}"
+
 func (s *Noiibat) ApplyHandler(name string) func(http.Handler) http.Handler {
 	var MapHandlers = map[string]func(http.Handler) http.Handler{
 		"context": s.createContext,
@@ -31,8 +34,9 @@ func (s *Noiibat) respond(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		uuid := r.Context().Value(UUIDKey)
 		log.Printf("%s responding to %s.", s.Name, uuid)
+		w.Header().Set("Content-Type", "application/json")
 		next.ServeHTTP(w, r)
-		w.Write([]byte("completed\n"))
+		w.Write([]byte(ResponsePayload))
 	})
 }
 
